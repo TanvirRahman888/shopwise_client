@@ -1,7 +1,4 @@
 import { PublicLayout } from "@/components/layout/public-layout";
-import { Container } from "@/components/shared/container";
-import { Button } from "@/components/ui/button";
-import { ArrowRight, Sparkles } from "lucide-react";
 
 import { HeroSlider } from "@/components/home/hero-slider";
 import { FeaturedProducts } from "@/components/home/featured-products";

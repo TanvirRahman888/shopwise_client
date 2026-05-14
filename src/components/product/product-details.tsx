@@ -134,7 +134,7 @@ export function ProductDetails({ product }: ProductDetailsProps) {
           <div>
             <div className="relative">
               <div
-                className="relative aspect-square cursor-crosshair overflow-hidden rounded-[2rem] border border-slate-200 bg-slate-100 dark:border-slate-800 dark:bg-slate-900"
+                className="relative aspect-square cursor-crosshair overflow-hidden rounded-4xl border border-slate-200 bg-slate-100 dark:border-slate-800 dark:bg-slate-900"
                 onMouseEnter={() => setIsMagnifierVisible(true)}
                 onMouseLeave={() => setIsMagnifierVisible(false)}
                 onMouseMove={handleImageMouseMove}
@@ -165,7 +165,7 @@ export function ProductDetails({ product }: ProductDetailsProps) {
 
               {selectedImage && isMagnifierVisible && (
                 <div
-                  className="pointer-events-none absolute left-[calc(100%+24px)] top-0 z-50 hidden h-full w-full overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-2xl lg:block dark:border-slate-800 dark:bg-slate-900"
+                  className="pointer-events-none absolute left-[calc(100%+24px)] top-0 z-50 hidden h-full w-full overflow-hidden rounded-4xl border border-slate-200 bg-white shadow-2xl lg:block dark:border-slate-800 dark:bg-slate-900"
                   style={{
                     backgroundImage: `url(${selectedImage})`,
                     backgroundRepeat: "no-repeat",
@@ -376,7 +376,7 @@ export function ProductDetails({ product }: ProductDetailsProps) {
         </section>
 
         <section className="mt-16 grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
-          <div className="rounded-[2rem] border border-slate-200 p-8 dark:border-slate-800">
+          <div className="rounded-4xl border border-slate-200 p-8 dark:border-slate-800">
             <h2 className="text-2xl font-black text-slate-950 dark:text-white">
               Product Overview
             </h2>
@@ -386,7 +386,7 @@ export function ProductDetails({ product }: ProductDetailsProps) {
             </p>
           </div>
 
-          <div className="rounded-[2rem] border border-slate-200 p-8 dark:border-slate-800">
+          <div className="rounded-4xl border border-slate-200 p-8 dark:border-slate-800">
             <h2 className="text-2xl font-black text-slate-950 dark:text-white">
               Specifications
             </h2>

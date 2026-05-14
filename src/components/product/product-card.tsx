@@ -108,7 +108,7 @@ export function ProductCard({ product }: ProductCardProps) {
 
           <div className="mt-auto flex gap-2 pt-5">
             <Button asChild variant="outline" className="flex-1 rounded-full">
-              <Link href={`/products/${product._id}`} prefetch={false}>
+              <Link href={`/products/${product.slug}`} prefetch={false}>
                 View Details
               </Link>
             </Button>
