@@ -1,14 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import {
   Heart,
+  LayoutDashboard,
+  LogOut,
   Menu,
   Search,
   ShoppingCart,
   Sparkles,
   User,
+  UserCircle,
   X,
 } from "lucide-react";
 
@@ -16,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { Container } from "@/components/shared/container";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { Badge } from "@/components/ui/badge";
+import { useAuthStore } from "@/store/auth-store";
 
 const navLinks = [
   { label: "Home", href: "/" },
@@ -28,13 +33,55 @@ const navLinks = [
 ];
 
 export function Navbar() {
+  const router = useRouter();
+
   const [isOpen, setIsOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const profileMenuRef = useRef<HTMLDivElement | null>(null);
+
+  const user = useAuthStore((state) => state.user);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const logout = useAuthStore((state) => state.logout);
+
+  const dashboardHref =
+    user?.role === "admin"
+      ? "/dashboard/admin"
+      : user?.role === "manager"
+        ? "/dashboard/manager"
+        : "/dashboard";
+
+  const handleLogout = () => {
+    sessionStorage.setItem("shopwise_logout_redirect", "true");
+    logout();
+    setIsProfileOpen(false);
+    setIsOpen(false);
+    router.replace("/");
+  };
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        profileMenuRef.current &&
+        !profileMenuRef.current.contains(event.target as Node)
+      ) {
+        setIsProfileOpen(false);
+      }
+    }
+
+    if (isProfileOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isProfileOpen]);
 
   return (
     <header className="sticky top-0 z-50 border-b border-slate-200/70 bg-white/90 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-950/90">
       <Container>
         <div className="flex h-16 items-center justify-between gap-4">
-          <Link href="/" className="flex items-center gap-2">
+          <Link href="/" className="flex items-center gap-2" prefetch={false}>
             <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-600 text-white shadow-sm">
               <ShoppingCart className="h-5 w-5" />
             </div>
@@ -75,26 +122,110 @@ export function Navbar() {
 
             <ThemeToggle />
 
-            <Button variant="ghost" size="icon" className="relative rounded-full">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="relative rounded-full"
+            >
               <Heart className="h-5 w-5" />
               <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-emerald-600 text-[10px] font-bold text-white">
                 2
               </span>
             </Button>
 
-            <Button variant="ghost" size="icon" className="relative rounded-full">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="relative rounded-full"
+            >
               <ShoppingCart className="h-5 w-5" />
               <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-orange-500 text-[10px] font-bold text-white">
                 3
               </span>
             </Button>
 
-            <Button asChild className="rounded-full bg-emerald-600 px-5 font-semibold hover:bg-emerald-700">
-              <Link href="/login">
-                <User className="mr-2 h-4 w-4" />
-                Login
-              </Link>
-            </Button>
+            {!isAuthenticated ? (
+              <Button
+                asChild
+                className="rounded-full bg-emerald-600 px-5 font-semibold hover:bg-emerald-700"
+              >
+                <Link href="/login" prefetch={false}>
+                  <User className="mr-2 h-4 w-4" />
+                  Login
+                </Link>
+              </Button>
+            ) : (
+              <div className="relative" ref={profileMenuRef}>
+                <button
+                  type="button"
+                  onClick={() => setIsProfileOpen((prev) => !prev)}
+                  className="flex h-11 items-center gap-2 rounded-full border border-slate-200 bg-white px-2 pr-4 text-sm font-bold text-slate-700 shadow-sm transition hover:border-emerald-500 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200"
+                >
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-600 text-white">
+                    {user?.avatar ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={user.avatar}
+                        alt={user.name}
+                        className="h-8 w-8 rounded-full object-cover"
+                      />
+                    ) : (
+                      <UserCircle className="h-5 w-5" />
+                    )}
+                  </div>
+
+                  <span className="max-w-24 truncate">{user?.name}</span>
+                </button>
+
+                {isProfileOpen && (
+                  <div className="absolute right-0 top-14 w-64 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl dark:border-slate-800 dark:bg-slate-900">
+                    <div className="border-b border-slate-200 p-4 dark:border-slate-800">
+                      <p className="font-black text-slate-950 dark:text-white">
+                        {user?.name}
+                      </p>
+                      <p className="mt-1 truncate text-sm text-slate-500 dark:text-slate-400">
+                        {user?.email}
+                      </p>
+                      <span className="mt-2 inline-flex rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold capitalize text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">
+                        {user?.role}
+                      </span>
+                    </div>
+
+                    <div className="p-2">
+                      <ProfileMenuLink
+                        href={dashboardHref}
+                        icon={<LayoutDashboard className="h-4 w-4" />}
+                        label="Dashboard"
+                        onClick={() => setIsProfileOpen(false)}
+                      />
+
+                      <ProfileMenuLink
+                        href="/dashboard/profile"
+                        icon={<User className="h-4 w-4" />}
+                        label="Profile"
+                        onClick={() => setIsProfileOpen(false)}
+                      />
+
+                      <ProfileMenuLink
+                        href="/dashboard/orders"
+                        icon={<ShoppingCart className="h-4 w-4" />}
+                        label="Orders"
+                        onClick={() => setIsProfileOpen(false)}
+                      />
+
+                      <button
+                        type="button"
+                        onClick={handleLogout}
+                        className="flex w-full items-center gap-3 rounded-2xl px-3 py-2 text-sm font-bold text-rose-600 transition hover:bg-rose-50 dark:hover:bg-rose-950/30"
+                      >
+                        <LogOut className="h-4 w-4" />
+                        Logout
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           <button
@@ -144,13 +275,72 @@ export function Navbar() {
                 Wishlist
               </Button>
 
-              <Button asChild className="flex-1 rounded-full bg-emerald-600 hover:bg-emerald-700">
-                <Link href="/login">Login</Link>
-              </Button>
+              {!isAuthenticated ? (
+                <Button
+                  asChild
+                  className="flex-1 rounded-full bg-emerald-600 hover:bg-emerald-700"
+                >
+                  <Link
+                    href="/login"
+                    prefetch={false}
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Login
+                  </Link>
+                </Button>
+              ) : (
+                <Button
+                  asChild
+                  className="flex-1 rounded-full bg-emerald-600 hover:bg-emerald-700"
+                >
+                  <Link
+                    href={dashboardHref}
+                    prefetch={false}
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Dashboard
+                  </Link>
+                </Button>
+              )}
             </div>
+
+            {isAuthenticated && (
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="mt-3 flex w-full items-center justify-center gap-2 rounded-full border border-rose-200 px-4 py-2 text-sm font-bold text-rose-600 dark:border-rose-900"
+              >
+                <LogOut className="h-4 w-4" />
+                Logout
+              </button>
+            )}
           </div>
         )}
       </Container>
     </header>
+  );
+}
+
+function ProfileMenuLink({
+  href,
+  icon,
+  label,
+  onClick,
+}: {
+  href: string;
+  icon: React.ReactNode;
+  label: string;
+  onClick: () => void;
+}) {
+  return (
+    <Link
+      href={href}
+      prefetch={false}
+      onClick={onClick}
+      className="flex items-center gap-3 rounded-2xl px-3 py-2 text-sm font-bold text-slate-700 transition hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800"
+    >
+      {icon}
+      {label}
+    </Link>
   );
 }
