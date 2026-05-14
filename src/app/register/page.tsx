@@ -97,8 +97,8 @@ export default function RegisterPage() {
     <PublicLayout>
       <main className="bg-white py-16 dark:bg-slate-950">
         <Container>
-          <div className="mx-auto grid max-w-6xl overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-xl dark:border-slate-800 dark:bg-slate-900 lg:grid-cols-2">
-            <section className="relative hidden bg-gradient-to-br from-slate-950 via-emerald-800 to-emerald-600 p-10 text-white lg:block">
+          <div className="mx-auto grid max-w-6xl overflow-hidden rounded-4xl border border-slate-200 bg-white shadow-xl dark:border-slate-800 dark:bg-slate-900 lg:grid-cols-2">
+            <section className="relative hidden bg-linear-to-br from-slate-950 via-emerald-800 to-emerald-600 p-10 text-white lg:block">
               <div className="absolute inset-0 opacity-20">
                 <div className="absolute left-10 top-10 h-32 w-32 rounded-full bg-white blur-3xl" />
                 <div className="absolute bottom-16 right-10 h-40 w-40 rounded-full bg-violet-400 blur-3xl" />
