@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { ProductDetails } from "@/components/product/product-details";
 import { PublicLayout } from "@/components/layout/public-layout";
 import { Product } from "@/types/product";
+import { RecommendedProducts } from "@/components/product/recommended-products";
 
 interface ProductDetailsPageProps {
   params: Promise<{
@@ -44,6 +45,10 @@ export default async function ProductDetailsPage({
   return (
     <PublicLayout>
       <ProductDetails product={product} />
+      <RecommendedProducts
+        currentProductId={product._id}
+        category={product.category}
+      />
     </PublicLayout>
   );
 }
