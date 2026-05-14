@@ -5,6 +5,8 @@ import { QueryProvider } from "@/providers/query-provider";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { AuthProvider } from "@/providers/auth-provider";
 
+import { Toaster } from "react-hot-toast";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -34,6 +36,16 @@ export default function RootLayout({
         <ThemeProvider>
           <QueryProvider>
             <AuthProvider>{children}</AuthProvider>
+            <Toaster
+              position="top-center"
+              toastOptions={{
+                duration: 3000,
+                style: {
+                  borderRadius: "16px",
+                  fontWeight: "700",
+                },
+              }}
+            />
           </QueryProvider>
         </ThemeProvider>
       </body>
