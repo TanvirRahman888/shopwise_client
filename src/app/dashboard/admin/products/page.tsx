@@ -44,11 +44,7 @@ export default function AdminProductsPage() {
         setIsLoading(true);
         setError("");
 
-        const res = await api.get<ProductsResponse>("/products", {
-          params: {
-            limit: 100,
-          },
-        });
+        const res = await api.get<ProductsResponse>("/products/admin/all");
 
         setProducts(res.data.products || []);
       } catch (err: any) {
